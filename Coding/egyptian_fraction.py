@@ -57,6 +57,7 @@ def main():
     parser.add_argument("a", type=int, help="numerator (a), must be < b")
     parser.add_argument("b", type=int, help="denominator (b)")
     parser.add_argument("--max-iters", type=int, default=10000, help="maximum iterations before aborting")
+    parser.add_argument("--quiet", action="store_true", help="suppress per-step debug output")
     args = parser.parse_args()
 
     a = args.a
@@ -72,10 +73,18 @@ def main():
     print(f"Decomposition of {a}/{b} is:")
     print(format_decomposition(dens))
 
-    # optional check: verify sum equals original fraction
+    # stepwise addition and final sum
     from fractions import Fraction
-    ssum = sum(Fraction(1, d) for d in dens)
-    print(f"Verification: sum = {ssum} (original {Fraction(a, b)})")
+    cum = Fraction(0, 1)
+    print()
+    print("Stepwise addition of unit fractions:")
+    for i, d in enumerate(dens, start=1):
+        cum += Fraction(1, d)
+        print(f"  {i}. add 1/{d} => {cum.numerator}/{cum.denominator}")
+
+    print()
+    print(f"Full expression: {format_decomposition(dens)} = {cum.numerator}/{cum.denominator}")
+    print(f"Verification: sum = {cum} (original {Fraction(a, b)})")
 
 
 if __name__ == "__main__":
