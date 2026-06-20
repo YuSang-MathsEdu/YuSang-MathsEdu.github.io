@@ -51,6 +51,8 @@ def format_decomposition(dens):
 
 def main():
     import argparse
+    import sys
+
     parser = argparse.ArgumentParser(description="Egyptian fraction decomposition")
     parser.add_argument("a", type=int, help="numerator (a), must be < b")
     parser.add_argument("b", type=int, help="denominator (b)")
@@ -63,8 +65,8 @@ def main():
     try:
         dens = egyptian_decomposition(a, b, max_iters=args.max_iters)
     except Exception as e:
-        print("Error:", e)
-        return
+        print("Error:", e, file=sys.stderr)
+        sys.exit(1)
 
     print()
     print(f"Decomposition of {a}/{b} is:")
