@@ -1,0 +1,44 @@
+name: Run egyptian_fraction
+
+on:
+  push:
+    paths:
+      - 'Coding/**'
+  workflow_dispatch:
+    inputs:
+      a:
+        description: 'Numerator a'
+        required: true
+        default: '4'
+      b:
+        description: 'Denominator b'
+        required: true
+        default: '13'
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies (if any)
+        run: |
+          python -m pip install --upgrade pip
+          # if you add dependencies, add a requirements.txt and uncomment:
+          # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run egyptian_fraction
+        run: |
+          python Coding/egyptian_fraction.py "${{ github.event.inputs.a }}" "${{ github.event.inputs.b }}" 2>&1 | tee egyptian-output.log
+
+      - name: Upload output log
+        uses: actions/upload-artifact@v4
+        with:
+          name: egyptian-output
+          path: egyptian-output.log
