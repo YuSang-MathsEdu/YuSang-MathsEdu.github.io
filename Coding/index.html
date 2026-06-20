@@ -1,97 +1,53 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Coding — Egyptian Fraction (egyptian_fraction.py)</title>
-  <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; padding: 2rem; background:#f7f7f9; color:#111 }
-    pre { background: #fff; padding: 1rem; border: 1px solid #e1e4e8; border-radius:6px; overflow:auto }
-    h1 { margin-top:0 }
-    .meta { color: #555; margin-bottom: 1rem }
-    a.button { display:inline-block; padding: .4rem .6rem; background:#0366d6; color:#fff; border-radius:6px; text-decoration:none }
-  </style>
-</head>
-<body>
-  <h1>Egyptian fraction — egyptian_fraction.py</h1>
-  <p class="meta">This page shows the python source file <code>egyptian_fraction.py</code> as provided.</p>
+<!DOCTYPE html>
+	<html>
+		<head>
+			<title>Maths ideas</title>
+			<!-- link to main stylesheet -->
+			<link rel="stylesheet" type="text/css" href="../css/main.css">
+		</head>
+		<body>
+			<nav>
+	    		<ul>
+	        		<li><a href="/">Home</a></li>
+		        	<li><a href="/maths">Maths</a></li>
+	        		<li><a href="/geometry">Geometry</a></li>
+	        		<li><a href="/Coding">Coding</a></li>
+	    		</ul>
+			</nav>
+			<div class="container">
+			
+			<!--{{ content }}-->
+      		<h2>1. Decomposition of proper fraction into a summation of fractions with 1 as all the denominators</h><br><br>
+        	
+			<br><br>
+<!--
+			<h2>2. Differentiate x^[(ln x)^(ln x)]</h><br><br>
+        	<embed src="Differentiate_x__ln_x___ln_x_.pdf" width="100%" height="400" type="application/pdf">
+			<br><br>
 
-  <pre><code>#!/usr/bin/env python3
-"""
-Egyptian-fraction style loop:
-Input two natural numbers a and b (with a &lt; b).
-Loop:
-  c = ceil(b/a)
-  d = a*c - b
-  if d == 0: stop
-  else a, b = d, b*c (reduce fraction each step)
-This script prints the sequence of c's and the resulting sum of unit fractions.
-"""
+			<h2>3. Solving a higher order (quartic) equation</h><br><br>
+        	<embed src="Solving_quartic.pdf" width="100%" height="400" type="application/pdf">
+			<br><br>
 
-from math import gcd
+			<h2>4. Solving a quartic polynomial equation</h><br><br>
+        	<embed src="Solving a quartic polynomial equation.pdf" width="100%" height="400" type="application/pdf">
+			<br><br>				
+				
+			<h2>5. Solving some of the 2026 A-level questions</h><br><br>
+        	<embed src="2026_A_level.pdf" width="100%" height="400" type="application/pdf">
+			<br><br>
 
-def egyptian_decomposition(a: int, b: int, max_iters: int = 10000):
-    if a <= 0 or b <= 0:
-        raise ValueError("a and b must be positive integers.")
-    if not (a &lt; b):
-        raise ValueError("Require a &lt; b.")
-    dens = []
-    iters = 0
-    while True:
-        iters += 1
-        if iters &gt; max_iters:
-            raise RuntimeError("Exceeded maximum iterations; aborting (possible non-termination).")
-        # compute ceil(b/a) using integer arithmetic
-        c = (b + a - 1) // a
-        dens.append(c)
-        d = a * c - b
-        # Debug / trace info (you can comment this out if verbose):
-        print(f"Step {iters}: a={a}, b={b}, c=ceil({b}/{a})={c}, d={a}*{c}-{b}={d}")
-        if d == 0:
-            break
-        # update and reduce fraction a/b to keep numbers smaller
-        a, b = d, b * c
-        g = gcd(a, b)
-        if g &gt; 1:
-            a //= g
-            b //= g
-    return dens
-
-
-def format_decomposition(dens):
-    parts = [f"1/{d}" for d in dens]
-    return " + ".join(parts)
-
-
-def main():
-    try:
-        s = input("Enter two natural numbers a and b (a &lt; b), separated by space: ").strip()
-        a_str, b_str = s.split()
-        a = int(a_str)
-        b = int(b_str)
-    except Exception:
-        print("Invalid input. Example valid input: 4 13")
-        return
-
-    try:
-        dens = egyptian_decomposition(a, b)
-    except Exception as e:
-        print("Error:", e)
-        return
-
-    print()
-    print(f"Decomposition of {a}/{b} is:")
-    print(format_decomposition(dens))
-
-    # optional check: verify sum equals original fraction
-    from fractions import Fraction
-    ssum = sum(Fraction(1, d) for d in dens)
-    print(f"Verification: sum = {ssum} (original {Fraction(int(a_str), int(b_str))})")
-
-if __name__ == "__main__":
-    main()
-</code></pre>
-
-  <p><a class="button" href="/Coding/index.html">View this page</a></p>
-</body>
-</html>
+			<h2>6. Solving some of the 2020 IMC questions</h><br><br>
+        	<embed src="IMC_2020.pdf" width="100%" height="400" type="application/pdf">
+			<br><br>
+				-->
+				
+			</div><!-- /.container -->
+			<footer>
+	    		<ul>
+	        		<li><a href="mailto:yusang.lo@gmail.com">email</a></li>
+	        		<!--<li><a href="https://github.com/hankquinlan">github.com/hankquinlan</a></li>-->
+				</ul>
+			</footer>
+		</body>
+	</html>
