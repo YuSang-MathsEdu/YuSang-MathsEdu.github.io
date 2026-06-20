@@ -53,9 +53,18 @@ def format_decomposition(dens):
     return " + ".join(parts)
 
 
+def one_line_summary(a, b, dens, cum):
+    """Return a compact one-line summary string."""
+    left = f"{a}/{b}"
+    expr = format_decomposition(dens)
+    right = f"{cum.numerator}/{cum.denominator}"
+    return f"{left} -> {expr} -> {right}"
+
+
 def main():
     import argparse
     import sys
+    import json
     from fractions import Fraction
 
     parser = argparse.ArgumentParser(description="Egyptian fraction decomposition")
@@ -63,6 +72,9 @@ def main():
     parser.add_argument("b", type=int, help="denominator (b)")
     parser.add_argument("--max-iters", type=int, default=10000, help="maximum iterations before aborting")
     parser.add_argument("--quiet", action="store_true", help="suppress per-step debug output")
+    parser.add_argument("--summary", action="store_true", help="print one-line summary suitable for CI logs")
+    parser.add_argument("--json", action="store_true", help="print machine-readable JSON to stdout")
+    parser.add_argument("--json-file", type=str, default=None, help="write machine-readable JSON to this file path")
     args = parser.parse_args()
 
     a = args.a
@@ -89,18 +101,42 @@ def main():
         if not args.quiet:
             print(f"  {i}. add 1/{d} => {cum.numerator}/{cum.denominator}")
 
-    # Final outputs: expression, final rational, decimal, and verification vs original
+    # Final outputs: expression, final rational, and verification vs original
     print()
     print(f"Full expression: {format_decomposition(dens)} = {cum.numerator}/{cum.denominator}")
     print(f"Verification: sum = {cum} (original {orig})")
-    if cum == orig:
+    ok = (cum == orig)
+    if ok:
         print("Check: OK — the decomposition sums exactly to the original fraction.")
     else:
-        # shouldn't normally happen; give the difference for debugging
         diff = cum - orig
         print(f"Check: MISMATCH — sum differs by {diff} ({float(diff):.12g})")
-        # exit non-zero to signal CI if desired
-        # sys.exit(2)
+
+    # One-line summary for CI logs
+    if args.summary:
+        print()
+        print(one_line_summary(a, b, dens, cum))
+
+    # Machine-readable JSON output
+    if args.json or args.json_file:
+        obj = {
+            "input": {"a": a, "b": b},
+            "denominators": dens,
+            "final_numerator": cum.numerator,
+            "final_denominator": cum.denominator,
+            "decimal_sum": float(cum),
+            "ok": ok,
+        }
+        json_text = json.dumps(obj, separators=(',', ':'), sort_keys=True)
+        if args.json:
+            print()
+            print(json_text)
+        if args.json_file:
+            try:
+                with open(args.json_file, 'w', encoding='utf-8') as fh:
+                    fh.write(json_text + '\n')
+            except Exception as e:
+                print(f"Warning: failed to write JSON file {args.json_file}: {e}", file=sys.stderr)
 
 if __name__ == "__main__":
     main()
