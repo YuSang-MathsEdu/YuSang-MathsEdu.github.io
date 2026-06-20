@@ -10,7 +10,7 @@ Loop:
 This script prints the sequence of c's and the resulting sum of unit fractions.
 
 Usable from CLI as:
-  python Coding/egyptian_fraction.py 4 13
+  python Code/egyptian_fraction.py 4 13
 """
 
 from math import gcd
