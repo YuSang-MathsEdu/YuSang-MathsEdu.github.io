@@ -35,7 +35,7 @@ jobs:
 
       - name: Run egyptian_fraction
         run: |
-          python Coding/egyptian_fraction.py "${{ github.event.inputs.a }}" "${{ github.event.inputs.b }}" 2>&1 | tee egyptian-output.log
+          python Code/egyptian_fraction.py "${{ github.event.inputs.a }}" "${{ github.event.inputs.b }}" 2>&1 | tee egyptian-output.log
 
       - name: Upload output log
         uses: actions/upload-artifact@v4
