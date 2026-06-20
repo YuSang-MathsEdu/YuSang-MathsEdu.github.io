@@ -10,13 +10,17 @@ Loop:
 This script prints the sequence of c's and the resulting sum of unit fractions.
 
 Usable from CLI as:
-  python egyptian_fraction.py 4 13
+  python Coding/egyptian_fraction.py 4 13
 """
 
 from math import gcd
 
 
-def egyptian_decomposition(a: int, b: int, max_iters: int = 10000):
+def egyptian_decomposition(a: int, b: int, max_iters: int = 10000, verbose: bool = True):
+    """
+    Return a list of denominators for the egyptian decomposition of a/b.
+    If verbose is True, print per-step trace to stdout.
+    """
     if a <= 0 or b <= 0:
         raise ValueError("a and b must be positive integers.")
     if not (a < b):
@@ -31,8 +35,8 @@ def egyptian_decomposition(a: int, b: int, max_iters: int = 10000):
         c = (b + a - 1) // a
         dens.append(c)
         d = a * c - b
-        # Debug / trace info (you can comment this out if verbose):
-        print(f"Step {iters}: a={a}, b={b}, c=ceil({b}/{a})={c}, d={a}*{c}-{b}={d}")
+        if verbose:
+            print(f"Step {iters}: a={a}, b={b}, c=ceil({b}/{a})={c}, d={a}*{c}-{b}={d}")
         if d == 0:
             break
         # update and reduce fraction a/b to keep numbers smaller
@@ -52,6 +56,7 @@ def format_decomposition(dens):
 def main():
     import argparse
     import sys
+    from fractions import Fraction
 
     parser = argparse.ArgumentParser(description="Egyptian fraction decomposition")
     parser.add_argument("a", type=int, help="numerator (a), must be < b")
@@ -62,9 +67,10 @@ def main():
 
     a = args.a
     b = args.b
+    orig = Fraction(a, b)
 
     try:
-        dens = egyptian_decomposition(a, b, max_iters=args.max_iters)
+        dens = egyptian_decomposition(a, b, max_iters=args.max_iters, verbose=(not args.quiet))
     except Exception as e:
         print("Error:", e, file=sys.stderr)
         sys.exit(1)
@@ -73,19 +79,28 @@ def main():
     print(f"Decomposition of {a}/{b} is:")
     print(format_decomposition(dens))
 
-    # stepwise addition and final sum
-    from fractions import Fraction
+    # compute exact sum of unit fractions
     cum = Fraction(0, 1)
-    print()
-    print("Stepwise addition of unit fractions:")
+    if not args.quiet:
+        print()
+        print("Stepwise addition of unit fractions:")
     for i, d in enumerate(dens, start=1):
         cum += Fraction(1, d)
-        print(f"  {i}. add 1/{d} => {cum.numerator}/{cum.denominator}")
+        if not args.quiet:
+            print(f"  {i}. add 1/{d} => {cum.numerator}/{cum.denominator}")
 
+    # Final outputs: expression, final rational, decimal, and verification vs original
     print()
     print(f"Full expression: {format_decomposition(dens)} = {cum.numerator}/{cum.denominator}")
-    print(f"Verification: sum = {cum} (original {Fraction(a, b)})")
-
+    print(f"Verification: sum = {cum} (original {orig})")
+    if cum == orig:
+        print("Check: OK — the decomposition sums exactly to the original fraction.")
+    else:
+        # shouldn't normally happen; give the difference for debugging
+        diff = cum - orig
+        print(f"Check: MISMATCH — sum differs by {diff} ({float(diff):.12g})")
+        # exit non-zero to signal CI if desired
+        # sys.exit(2)
 
 if __name__ == "__main__":
     main()
