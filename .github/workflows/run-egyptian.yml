@@ -3,7 +3,7 @@ name: Run egyptian_fraction
 on:
   push:
     paths:
-      - 'Coding/**'
+      - 'Code/**'
   workflow_dispatch:
     inputs:
       a:
